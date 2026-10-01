@@ -28,7 +28,7 @@ export class Recomendacao {
             if (!periodos[periodo]) {
                 periodos[periodo] = [];
             }
-
+             console.log(periodo, previsao);
             periodos[periodo].push(previsao);
         });
 
@@ -44,11 +44,41 @@ export class Recomendacao {
             const piorVento = Math.max(...ventos);
             const piorUv = Math.max(...uvs);
 
-            return new Recomendacao(periodo, sensacaoMin, sensacaoMax, piorChuva, piorVento, piorUv, []);
+            const roupas = Recomendacao.definirRoupas({ sensacaoMin, chuva: piorChuva, vento: piorVento, uv: piorUv });
+
+            return new Recomendacao(periodo, sensacaoMin, sensacaoMax, piorChuva, piorVento, piorUv, roupas);
         });
 
         resultado.sort((a, b) => ORDEM.indexOf(a.periodo) - ORDEM.indexOf(b.periodo));
 
         return resultado;
+    }
+
+    static definirRoupas({ sensacaoMin, chuva, vento, uv }) {
+        const roupas = [];
+
+        if (sensacaoMin < 18) {
+            roupas.push("blusa de frio ou camisa de manga comprida");
+        } else if (sensacaoMin < 25) {
+            roupas.push("camisa de manga curta ou camiseta");
+        } else if (sensacaoMin < 30) {
+            roupas.push("camiseta leve branca ou colorida");
+        } else {
+            roupas.push("regata ou camiseta leve");
+        }
+
+        if (chuva >= 50) {
+            roupas.push("guarda-chuva ou casaco impermeável");
+        }
+
+        if (vento >= 30) {
+            roupas.push("capa de vento ou jaqueta leve");
+        }
+
+        if (uv >= 6) {
+            roupas.push("protetor solar e óculos de sol");
+        }
+
+        return roupas;
     }
 }
