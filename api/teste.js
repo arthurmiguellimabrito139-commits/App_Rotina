@@ -1,12 +1,8 @@
-import { buscarClima } from "./src/modules/clima/services/openMeteo.service.js";
-import { Previsao } from "./src/modules/clima/models/previsao.model.js";
-import { Recomendacao } from "./src/modules/clima/models/recomendacao.model.js";
+import { sequelize } from "./src/config/database.js";
 
-const dados = await buscarClima(-16.68, -49.25);
-
-const lista = Previsao.montarLista(dados);
-const recomendacoes = Recomendacao.agruparPorPeriodo(lista);
-
-console.log(lista[0]);
-console.log(lista.length);
-console.log(recomendacoes);
+try {
+  await sequelize.authenticate();
+  console.log("Conexão com o banco deu certo!");
+} catch (erro) {
+  console.error("Erro ao conectar:", erro);
+}

@@ -5,7 +5,7 @@ const Card = styled.div`
   border-radius: 24px;
   box-shadow: 0 12px 32px rgba(49, 80, 111, 0.1);
   overflow: hidden;
-  width: 280px;
+  width: 400px;
   font-family: "Inter", sans-serif;
 `;
 
@@ -49,12 +49,30 @@ const Horario = styled.p`
   margin: 2px 0 0;
 `;
 
-const Temperatura = styled.p`
+const Metricas = styled.div`
+  display: flex;
+  gap: 24px;
+`;
+
+const Metrica = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+`;
+
+const Rotulo = styled.span`
+  font-size: 11px;
+  font-weight: 600;
+  color: #4f6178;
+  text-transform: uppercase;
+`;
+
+const Valor = styled.span`
   font-family: "DM Sans", sans-serif;
   font-weight: 700;
   font-size: 16px;
   color: #17253a;
-  margin: 0;
 `;
 
 const Corpo = styled.div`
@@ -88,7 +106,11 @@ const ESTILO_POR_PERIODO = {
   Noite: { corFundo: "#ede9f8", icone: "🌧️", horario: "18h — 24h" },
 };
 
-export default function PeriodoCard({ periodo, sensacaoMin, sensacaoMax, roupas }) {
+function formatar(valor) {
+  return Number.isFinite(valor) ? `${Math.round(valor)}°` : "—";
+}
+
+export default function PeriodoCard({ periodo, roupas, temperaturaMin, temperaturaMax, sensacaoMin, sensacaoMax }) {
   const estilo = ESTILO_POR_PERIODO[periodo] ?? {};
 
   return (
@@ -101,9 +123,18 @@ export default function PeriodoCard({ periodo, sensacaoMin, sensacaoMax, roupas 
             <Horario>{estilo.horario}</Horario>
           </div>
         </Info>
-        <Temperatura>
-          {Math.round(sensacaoMin)}° → {Math.round(sensacaoMax)}°
-        </Temperatura>
+
+        <Metricas>
+          <Metrica>
+            <Rotulo>Sensação</Rotulo>
+            <Valor>{formatar(sensacaoMin)} → {formatar(sensacaoMax)}</Valor>
+          </Metrica>
+
+          <Metrica>
+            <Rotulo>Temperatura</Rotulo>
+            <Valor>{formatar(temperaturaMin)} → {formatar(temperaturaMax)}</Valor>
+          </Metrica>
+        </Metricas>
       </Cabecalho>
 
       <Corpo>

@@ -1,5 +1,9 @@
 export class Recomendacao {
-    constructor(periodo, sensacaoMin, sensacaoMax, chuva, vento, uv, roupas) {
+    constructor(temperatura, periodo, sensacaoMin, sensacaoMax, chuva, vento, uv, roupas) {
+        this.temperatura = temperatura;
+        const temperaturasValidas = temperatura.filter(Number.isFinite);
+        this.temperaturaMin = temperaturasValidas.length ? Math.min(...temperaturasValidas) : null;
+        this.temperaturaMax = temperaturasValidas.length ? Math.max(...temperaturasValidas) : null;
         this.periodo = periodo;
         this.sensacaoMin = sensacaoMin;
         this.sensacaoMax = sensacaoMax;
@@ -20,23 +24,26 @@ export class Recomendacao {
     static agruparPorPeriodo(listaPrevisao) {
         const ORDEM = ["Madrugada", "Manhã", "Tarde", "Noite"];
 
-        const periodos = {};
+        const grupos = {};
 
         listaPrevisao.forEach((previsao) => {
             const periodo = Recomendacao.periodoDaHora(previsao.hora);
+            const data = previsao.hora.slice(0, 10); // ex.: "2026-10-02"
+            const chave = `${data}_${periodo}`;
 
-            if (!periodos[periodo]) {
-                periodos[periodo] = [];
+            if (!grupos[chave]) {
+                grupos[chave] = { periodo, lista: [] };
             }
-             console.log(periodo, previsao);
-            periodos[periodo].push(previsao);
+
+            grupos[chave].lista.push(previsao);
         });
 
-        const resultado = Object.entries(periodos).map(([periodo, lista]) => {
+        const todosOsGrupos = Object.values(grupos).map(({ periodo, lista }) => {
             const sensacoes = lista.map((p) => p.sensacao);
             const chuvas = lista.map((p) => p.chuva);
             const ventos = lista.map((p) => p.vento);
             const uvs = lista.map((p) => p.uv);
+            const temperaturas = lista.map((p) => p.temperatura);
 
             const sensacaoMin = Math.min(...sensacoes);
             const sensacaoMax = Math.max(...sensacoes);
@@ -44,9 +51,22 @@ export class Recomendacao {
             const piorVento = Math.max(...ventos);
             const piorUv = Math.max(...uvs);
 
-            const roupas = Recomendacao.definirRoupas({ sensacaoMin, chuva: piorChuva, vento: piorVento, uv: piorUv });
+            const roupas = Recomendacao.definirRoupas({
+                sensacaoMin,
+                chuva: piorChuva,
+                vento: piorVento,
+                uv: piorUv,
+            });
 
-            return new Recomendacao(periodo, sensacaoMin, sensacaoMax, piorChuva, piorVento, piorUv, roupas);
+            return new Recomendacao(temperaturas, periodo, sensacaoMin, sensacaoMax, piorChuva, piorVento, piorUv, roupas);
+        });
+
+        
+        const periodosVistos = new Set();
+        const resultado = todosOsGrupos.filter((r) => {
+            if (periodosVistos.has(r.periodo)) return false;
+            periodosVistos.add(r.periodo);
+            return true;
         });
 
         resultado.sort((a, b) => ORDEM.indexOf(a.periodo) - ORDEM.indexOf(b.periodo));
