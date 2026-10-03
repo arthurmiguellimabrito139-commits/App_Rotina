@@ -1,7 +1,17 @@
+// Limites usados tanto no texto da recomendação quanto na escolha das peças do guarda-roupa
+export const LIMITES = {
+    frio: 18,       // sensação térmica abaixo disso pede roupa quente
+    ameno: 25,
+    calor: 30,
+    chuva: 50,      // % de probabilidade de chuva
+    vento: 30,      // km/h
+    uv: 6,
+};
+
 export class Recomendacao {
-    constructor(temperatura, periodo, sensacaoMin, sensacaoMax, chuva, vento, uv, roupas) {
-        this.temperatura = temperatura;
-        const temperaturasValidas = temperatura.filter(Number.isFinite);
+    constructor(temperaturas, periodo, sensacaoMin, sensacaoMax, chuva, vento, uv, roupas) {
+        this.temperaturas = temperaturas;
+        const temperaturasValidas = temperaturas.filter(Number.isFinite);
         this.temperaturaMin = temperaturasValidas.length ? Math.min(...temperaturasValidas) : null;
         this.temperaturaMax = temperaturasValidas.length ? Math.max(...temperaturasValidas) : null;
         this.periodo = periodo;
@@ -77,25 +87,25 @@ export class Recomendacao {
     static definirRoupas({ sensacaoMin, chuva, vento, uv }) {
         const roupas = [];
 
-        if (sensacaoMin < 18) {
+        if (sensacaoMin < LIMITES.frio) {
             roupas.push("blusa de frio ou camisa de manga comprida");
-        } else if (sensacaoMin < 25) {
+        } else if (sensacaoMin < LIMITES.ameno) {
             roupas.push("camisa de manga curta ou camiseta");
-        } else if (sensacaoMin < 30) {
+        } else if (sensacaoMin < LIMITES.calor) {
             roupas.push("camiseta leve branca ou colorida");
         } else {
             roupas.push("regata ou camiseta leve");
         }
 
-        if (chuva >= 50) {
+        if (chuva >= LIMITES.chuva) {
             roupas.push("guarda-chuva ou casaco impermeável");
         }
 
-        if (vento >= 30) {
+        if (vento >= LIMITES.vento) {
             roupas.push("capa de vento ou jaqueta leve");
         }
 
-        if (uv >= 6) {
+        if (uv >= LIMITES.uv) {
             roupas.push("protetor solar e óculos de sol");
         }
 
