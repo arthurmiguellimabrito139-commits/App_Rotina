@@ -6,7 +6,7 @@ import { Sugestao } from "../models/sugestao.model.js";
 
 export async function cadastrarPeca(req, res) {
     try {
-        const peca = await Peca.create(req.body);
+        const peca = await Peca.create({ ...req.body, usuarioId: req.usuarioId });
         res.status(201).json(peca);
     } catch (erro) {
         console.error(erro);
@@ -16,7 +16,7 @@ export async function cadastrarPeca(req, res) {
 
 export async function listarPecas(req, res) {
     try {
-        const pecas = await Peca.findAll();
+        const pecas = await Peca.findAll({ where: { usuarioId: req.usuarioId } });
         res.status(200).json(pecas);
     } catch (erro) {
         console.error(erro);
@@ -26,12 +26,13 @@ export async function listarPecas(req, res) {
 
 export async function atualizarPeca(req, res) {
     try {
-        const peca = await Peca.findByPk(req.params.id);
+        const peca = await Peca.findOne({ where: { id: req.params.id, usuarioId: req.usuarioId } });
         if (!peca) {
             return res.status(404).json({ erro: "Peça não encontrada" });
         }
 
-        await peca.update(req.body);
+        const { usuarioId, ...dados } = req.body;
+        await peca.update(dados);
         res.status(200).json(peca);
     } catch (erro) {
         console.error(erro);
@@ -41,7 +42,7 @@ export async function atualizarPeca(req, res) {
 
 export async function deletarPeca(req, res) {
     try {
-        const peca = await Peca.findByPk(req.params.id);
+        const peca = await Peca.findOne({ where: { id: req.params.id, usuarioId: req.usuarioId } });
         if (!peca) {
             return res.status(404).json({ erro: "Peça não encontrada" });
         }
@@ -71,7 +72,7 @@ export async function gerarSugestao(req, res) {
 
     try {
         const listaPrevisao = Previsao.montarLista(dados);
-        const sugestao = await Sugestao.gerarPorPeriodo(listaPrevisao);
+        const sugestao = await Sugestao.gerarPorPeriodo(listaPrevisao, req.usuarioId);
 
         res.status(200).json(sugestao);
     } catch (erro) {

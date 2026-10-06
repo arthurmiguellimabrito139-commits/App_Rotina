@@ -2,9 +2,9 @@ import { LIMITES, Recomendacao } from "../../Clima/models/recomendacao.model.js"
 import { Peca } from "./peca.model.js";
 
 export class Sugestao {
-  static async gerarPorPeriodo(listaPrevisao) {
+  static async gerarPorPeriodo(listaPrevisao, usuarioId) {
     const recomendacoes = Recomendacao.agruparPorPeriodo(listaPrevisao);
-    const pecas = await Peca.findAll({ where: { limpo: true } });
+    const pecas = await Peca.findAll({ where: { usuarioId, limpo: true } });
 
     const sugestao = recomendacoes.map((recomendacao) => {
       const pecasSugeridas = Sugestao.filtrarPecas(recomendacao, pecas);

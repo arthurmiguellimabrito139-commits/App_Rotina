@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../../config/database.js";
+import { Usuario } from "../../auth/models/usuario.model.js";
 
 export const Peca = sequelize.define("peca", {
     nome: {
@@ -31,3 +32,6 @@ export const Peca = sequelize.define("peca", {
         allowNull: true,
     },
 });
+
+Usuario.hasMany(Peca, { foreignKey: { name: "usuarioId", allowNull: false }, onDelete: "CASCADE" });
+Peca.belongsTo(Usuario, { foreignKey: { name: "usuarioId", allowNull: false } });

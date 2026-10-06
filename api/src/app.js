@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import climaRoutes from './modules/Clima/routes/clima.routes.js';
 import guardaRoupaRoutes from './modules/guardaRoupa/routes/guardaRoupa.routes.js';
+import authRoutes from './modules/auth/routes/auth.routes.js';
 
 const app = express();
 
@@ -10,5 +11,7 @@ app.use(express.json());
 
 app.use('/api/clima', climaRoutes);
 app.use("/api/guarda-roupa", guardaRoupaRoutes);
+app.use("/api/auth", authRoutes);
+
 
 export default app;
