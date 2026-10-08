@@ -6,6 +6,8 @@ import GuardaRoupa from "./components/GuardaRoupa";
 import { useAuth } from "./hooks/useAuth";
 import FormularioLogin from "./components/FormularioLogin";
 import FormularioCadastro from "./components/FormularioCadastro";
+import ClimaAgora from "./components/ClimaAgora";
+import Metricas from "./components/Metricas";
 const EstiloGlobal = createGlobalStyle`
   body {
     margin: 0;
@@ -69,24 +71,28 @@ const Aba = styled.button`
 `;
 
 function TelaClima() {
-  const { periodos, carregando, erro } = useClima();
-  
+  const { periodos, atual, agora, carregando, erro } = useClima();
 
   if (carregando) return <p>Carregando previsão...</p>;
   if (erro) return <p>{erro}</p>;
 
   return (
-    <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-      {periodos.map((p) => (
-        <PeriodoCard key={p.periodo} {...p} />
-      ))}
+    <div style={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "center" }}>
+      <ClimaAgora atual={atual} agora={agora} />
+      <Metricas agora={agora} />
+
+      <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+        {periodos.map((p) => (
+          <PeriodoCard key={p.periodo} {...p} />
+        ))}
+      </div>
     </div>
   );
 }
 
 function App() {
   const [aba, setAba] = useState("clima");
-  const { usuario , login , logout, registrar  } = useAuth();
+  const { usuario, token, login, logout, registrar } = useAuth();
   const [mostrarCadastro, setMostrarCadastro] = useState(false);
   
  if (!usuario) {
@@ -131,7 +137,7 @@ function App() {
         </Aba>
       </Abas>
 
-      {aba === "clima" ? <TelaClima /> : <GuardaRoupa />}
+     {aba === "clima" ? <TelaClima /> : <GuardaRoupa token={token} />}
     </Pagina>
   );
 }

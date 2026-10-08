@@ -15,7 +15,10 @@ export async function obterClima(req, res) {
     const lista = Previsao.montarLista(dados);
     const recomendacoes = Recomendacao.agruparPorPeriodo(lista);
 
-    res.json(recomendacoes);
+    const horaAtual = new Date().getHours();
+    const agora = lista.find((previsao) => Number(previsao.hora.slice(11, 13)) === horaAtual);
+
+    res.json({ agora, periodos: recomendacoes });
   } catch (erro) {
     console.error(erro);
     res.status(502).json({ erro: "Não foi possível obter o clima." });

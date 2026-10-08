@@ -4,7 +4,7 @@ import { Peca } from "./modules/guardaRoupa/models/peca.model.js";
 
 const PORT = 3001;
 
-await sequelize.sync();
+await sequelize.sync({ alter: true });
 
 app.listen(PORT, (error) => {
   if (error) {

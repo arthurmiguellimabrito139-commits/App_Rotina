@@ -9,7 +9,7 @@ export const LIMITES = {
 };
 
 export class Recomendacao {
-    constructor(temperaturas, periodo, sensacaoMin, sensacaoMax, chuva, vento, uv, roupas) {
+    constructor(temperaturas, periodo, sensacaoMin, sensacaoMax, chuva, vento, uv, roupas, umidade) {
         this.temperaturas = temperaturas;
         const temperaturasValidas = temperaturas.filter(Number.isFinite);
         this.temperaturaMin = temperaturasValidas.length ? Math.min(...temperaturasValidas) : null;
@@ -21,6 +21,7 @@ export class Recomendacao {
         this.vento = vento;
         this.uv = uv;
         this.roupas = roupas;
+        this.umidade = umidade;
     }
 
     static periodoDaHora(horaISO) {
@@ -54,21 +55,24 @@ export class Recomendacao {
             const ventos = lista.map((p) => p.vento);
             const uvs = lista.map((p) => p.uv);
             const temperaturas = lista.map((p) => p.temperatura);
+            const umidades = lista.map((p) => p.umidade);
 
             const sensacaoMin = Math.min(...sensacoes);
             const sensacaoMax = Math.max(...sensacoes);
             const piorChuva = Math.max(...chuvas);
             const piorVento = Math.max(...ventos);
             const piorUv = Math.max(...uvs);
+            const piorUmidade = Math.max(...umidades);
 
             const roupas = Recomendacao.definirRoupas({
                 sensacaoMin,
                 chuva: piorChuva,
                 vento: piorVento,
                 uv: piorUv,
+                umidade: piorUmidade
             });
 
-            return new Recomendacao(temperaturas, periodo, sensacaoMin, sensacaoMax, piorChuva, piorVento, piorUv, roupas);
+            return new Recomendacao(temperaturas, periodo, sensacaoMin, sensacaoMax, piorChuva, piorVento, piorUv, roupas, piorUmidade);
         });
 
         

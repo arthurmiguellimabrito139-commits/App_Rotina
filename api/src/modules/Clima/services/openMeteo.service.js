@@ -2,7 +2,7 @@ export async function buscarClima(lat, lon) {
   const params = new URLSearchParams({
     latitude: lat,
     longitude: lon,
-    hourly: "temperature_2m,apparent_temperature,precipitation_probability,wind_speed_10m,uv_index",
+    hourly: "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,wind_speed_10m,uv_index",
     timezone: "auto",
     forecast_hours: 24,
   });

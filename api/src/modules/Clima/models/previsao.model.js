@@ -1,11 +1,12 @@
 export class Previsao {
-  constructor(temperatura, hora, sensacao, chuva, vento, uv) {
+  constructor(temperatura, hora, sensacao, chuva, vento, uv, umidade) {
     this.temperatura = temperatura;
     this.hora = hora;
     this.sensacao = sensacao;
     this.chuva = chuva;
     this.vento = vento;
     this.uv = uv;
+    this.umidade = umidade;
   }
 
   static montarLista(dadosBrutos) {
@@ -21,7 +22,8 @@ export class Previsao {
         h.apparent_temperature[index],
         h.precipitation_probability[index],
         h.wind_speed_10m[index],
-        h.uv_index[index]
+        h.uv_index[index],
+        h.relative_humidity_2m[index]
       );
     });
           

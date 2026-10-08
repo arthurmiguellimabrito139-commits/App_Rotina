@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 const BASE_URL = "http://localhost:3001/api/guarda-roupa/pecas";
 
-export function usePecas() {
+export function usePecas(token) {
   const [pecas, setPecas] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
@@ -13,7 +13,9 @@ export function usePecas() {
     setErro(null);
 
     try {
-      const resposta = await fetch(BASE_URL);
+      const resposta = await fetch(BASE_URL, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       if (!resposta.ok) {
         throw new Error("Falha ao buscar as peças.");
@@ -26,7 +28,7 @@ export function usePecas() {
     } finally {
       setCarregando(false);
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     buscarPecas();
@@ -39,7 +41,10 @@ export function usePecas() {
     try {
       const resposta = await fetch(BASE_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(novaPeca),
       });
 
@@ -59,7 +64,10 @@ export function usePecas() {
 
   async function removerPeca(id) {
     try {
-      const resposta = await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
+      const resposta = await fetch(`${BASE_URL}/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       if (!resposta.ok) {
         throw new Error("Falha ao remover a peça.");
@@ -75,7 +83,10 @@ export function usePecas() {
     try {
       const resposta = await fetch(`${BASE_URL}/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(dados),
       });
 

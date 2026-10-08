@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
 
+function periodoAtual() {
+  const horaAtual = new Date().getHours();
+  if (horaAtual < 6) return "Madrugada";
+  if (horaAtual < 12) return "Manhã";
+  if (horaAtual < 18) return "Tarde";
+  return "Noite";
+}
+
 export function useClima() {
   const [periodos, setPeriodos] = useState([]);
+  const [agora, setAgora] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
@@ -17,7 +26,8 @@ export function useClima() {
           }
 
           const dados = await resposta.json();
-          setPeriodos(dados);
+          setPeriodos(dados.periodos);
+          setAgora(dados.agora);
         } catch (e) {
           setErro(e.message);
         } finally {
@@ -31,5 +41,7 @@ export function useClima() {
     );
   }, []);
 
-  return { periodos, carregando, erro };
+  const atual = periodos.find((item) => item.periodo === periodoAtual());
+
+  return { periodos, atual, agora, carregando, erro };
 }

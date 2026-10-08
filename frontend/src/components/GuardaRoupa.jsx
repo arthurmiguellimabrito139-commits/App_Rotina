@@ -10,8 +10,8 @@ const Container = styled.div`
   flex-wrap: wrap;
 `;
 
-export default function GuardaRoupa() {
-  const { pecas, carregando, erro, enviando, cadastrarPeca, removerPeca } = usePecas();
+export default function GuardaRoupa({ token }) {
+  const { pecas, carregando, erro, enviando, cadastrarPeca, removerPeca } = usePecas(token);
 
   return (
     <Container>
